@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+
+    database:
+        container_name: PSQL_DATABASE
+        restart: always
+        build:
+            context: ./database
+            dockerfile: Dockerfile
+        volumes:
+            - database_data:/var/lib/postgresql
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_USER=flash
+            - POSTGRES_PASSWORD=dydka
+            - POSTGRES_DB=database
+            - ALLOW_EMPTY_PASSWORD=yes
+
+    pgadmin:
+        container_name: PSQL_PGADMIN
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+          PGADMIN_DEFAULT_EMAIL: admin@admin.com
+          PGADMIN_DEFAULT_PASSWORD: root
+        ports:
+          - "5050:80"
+        volumes:
+          - pgadmin_data:/var/lib/pgadmin
+
+    backend: 
+
+        build: ./app
+        container_name: BACKEND_FLASK
+        restart: always
+        ports:
+            - "5000:5000"
+        command: gunicorn --chdir app --workers 4 --bind 0.0.0.0:5000 -m 007 'app:create_app()'
+        depends_on: 
+            - database
+        links: 
+            - database
+        environment: 
+            - POSTGRES_HOST=database
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
+        networks:
+            - project_network
+
+# connect : psql postgresql://flash:dydka@localhost:5432/database
+
+volumes:
+  pgadmin_data:
+      driver: local
+  database_data:
+    driver: local

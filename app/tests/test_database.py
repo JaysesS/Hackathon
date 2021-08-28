@@ -1,66 +1,143 @@
+from functools import wraps
 from unittest import TestCase
-import json
+from flask.globals import g
+from datetime import datetime, timedelta
 from sqlalchemy import func
+from app.app import create_app
+import json
 
-from app.schemas.node import NodeSchema
-from app.models import User, Node, get_session
+from app.models import User, Task, get_session, Base, engine
+
 
 class Test_DB(TestCase):
 
-
     @classmethod
     def setUpClass(cls):
+        Base.metadata.drop_all(engine)
+        Base.metadata.create_all(engine)
         cls.session = get_session()
-        cls.session.query(User).delete()
-        cls.session.query(Node).delete()
+        cls.app = create_app()
 
-    def fill_test(self):
+    def mock_g(func):
+        @wraps(func)
+        def _wrapper(self, *args, **kwargs):
+            with self.app.test_request_context():
+                g.session = self.session
+                result = func(self, *args, **kwargs)
+            return result
+        return _wrapper
+
+    def fill_test_users(self):
+        self.session.query(User).delete()
         # 1
-        cats = Node(name='cats')
+        director = User(name='Василёк', position="Директор")
         # 2
-        lions = Node(name='lions', parent=cats)
-        super_cats = Node(name='super_cats', parent=cats)
+        frontend = User(name='Петя',
+                        position="Фронт", parent=director)
+        backend = User(name='Костя',
+                       position="Архитектор", parent=director)
+        market = User(name='Катя',
+                      position="Маркетинг", parent=director)
+        devops = User(name='Ванёк',
+                      position="devOps", parent=director)
+        design = User(name='Ден',
+                      position="Десигн", parent=director)
+        # 3
+        backend2 = User(name='Игорь',
+                        position="Писатель питона", parent=backend)
+        tester = User(name='Абстрактный тестировщик',
+                      position="Тестер питона", parent=backend)
+        frontend2 = User(name='Еремей',
+                         position="Фронт", parent=frontend)
         # 4
-        roman = Node(name='roman', parent=super_cats)
-
-        tigers = Node(name='tigers', parent=lions)
-        bengal_tigers = Node(name='bengal_tigers', parent=lions)
+        backend3 = User(name='Абстрактный джун питона',
+                        position="Писатель питона", parent=backend2)
+        frontend3 = User(name='Абстрактный джун JS\'a',
+                         position="Фронт", parent=frontend2)
+        devops2 = User(name='Абстрактный джун devopa',
+                      position="devOPs", parent=devops)
 
         self.session.add_all(
-            [cats, lions, tigers, bengal_tigers, super_cats, roman])
+            [director, backend, backend2, frontend, frontend2, market, tester, devops, design, backend3, frontend3, devops2])
         self.session.commit()
 
-        tree = self.session.query(Node).all()
-        self.assertEqual(len(tree), 6)
-
-        tigers = self.session.query(Node).filter_by(name="tigers").first()
-        self.assertEqual(tigers.parent.name, "lions")
-        self.assertEqual([x.name for x in tigers.parent.children], [
-            "tigers", "bengal_tigers"])
-
-        third_layer = self.session.query(Node).filter(
-            func.nlevel(Node.path) == 3).all()
-        self.assertEqual([x.name for x in third_layer], [
-            "tigers", "bengal_tigers", "roman"])
-
-    def test_default(self):
-        user = User(username = "Shrek")
-        self.session.add(user)
+    @mock_g
+    def fill_test_tasks(self):
+        director = User.get_by_name("Василёк")
+        igor_backend = User.get_by_name("Игорь")
+        kost = User.get_by_name("Костя")
+        eremey = User.get_by_name("Еремей")
+        petr = User.get_by_name("Петя")
+        katya = User.get_by_name("Катя")
+        denis = User.get_by_name("Ден")
+        task1 = Task(
+            name="Фикс чего-то там",
+            process_name="Поддержка",
+            owner_id=director.id,
+            assigner_id=igor_backend.id,
+            start_time=datetime.now().timestamp(),
+            due_time=(datetime.now() + timedelta(hours=8)).timestamp(),
+            end_time=(datetime.now() + timedelta(hours=6)).timestamp(),
+            priority=75,
+            var_count=2
+        )
+        task2 = Task(
+            name="Сделай гугл",
+            process_name="Разработка",
+            owner_id=director.id,
+            assigner_id=kost.id,
+            start_time=datetime.now().timestamp(),
+            due_time=(datetime.now() + timedelta(hours=4)).timestamp(),
+            end_time=(datetime.now() +
+                      timedelta(hours=2)).timestamp(),
+            priority=80,
+            var_count=228
+        )
+        task3 = Task(
+            name="Перепиши весь десигн",
+            process_name="Поддержка",
+            owner_id=petr.id,
+            assigner_id=eremey.id,
+            start_time=datetime.now().timestamp(),
+            due_time=(datetime.now() + timedelta(hours=2)).timestamp(),
+            end_time=(datetime.now() +
+                      timedelta(hours=1, minutes=30)).timestamp(),
+            priority=99,
+            var_count=100
+        )
+        task4 = Task(
+            name="Нарисуй красиво",
+            process_name="Сбор урожая",
+            owner_id=katya.id,
+            assigner_id=denis.id,
+            start_time=datetime.now().timestamp(),
+            due_time=(datetime.now() + timedelta(hours=1)).timestamp(),
+            end_time=(datetime.now() +
+                      timedelta(minutes=30)).timestamp(),
+            priority=20,
+            var_count=1
+        )
+        self.session.add_all([task1, task2, task3, task4])
         self.session.commit()
-        get_user = self.session.query(User).filter_by(username="Shrek").first()
-        self.assertEqual(user.username, get_user.username)
 
+    @mock_g
     def test_nodes(self):
-        self.fill_test()
-        node_schema = NodeSchema()
-        root = self.session.query(Node).filter(
-            func.nlevel(Node.path) == 1).all()
+        self.fill_test_users()
+        root = User.get_by_level(1)
+        # print(json.dumps(User.nodes_to_json(root), indent=4, ensure_ascii=False))
+        root = User.get_flat_list()
+        # print(json.dumps(root, indent=4, ensure_ascii=False))
+        # print(root)
 
-        print(json.dumps(Node.nodes_to_json(root), indent=4))
-
-
-
-        # root_json = node_schema.dump(root, many=True)
-        # print(json.dumps(root.to_json(), indent=4))
-        # for node in root:
-        #     print(node.children)
+    @mock_g
+    def test_task(self):
+        self.fill_test_users()
+        self.fill_test_tasks()
+        tasks = self.session.query(Task).all()
+        self.assertEqual(len(tasks), 4)
+        director = User.get_by_name("Василёк")
+        self.assertEqual(len(director.tasks_assign), 0)
+        self.assertEqual(len(director.tasks_own), 2)
+        igor_backend = User.get_by_name("Игорь")
+        self.assertEqual(len(igor_backend.tasks_assign), 1)
+        self.assertEqual(len(igor_backend.tasks_own), 0)

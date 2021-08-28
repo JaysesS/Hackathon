@@ -34,8 +34,6 @@ create extension ltree;
 python -m unittest app.tests.test_database -v
 ```
 
-Прости за flask.g :hand_over_mouth:, завтра объясню :shushing_face:
-
 
 ## Endpoints
 
@@ -44,20 +42,22 @@ python -m unittest app.tests.test_database -v
 
 - *Structure tree GET /api/structure/*
 
-    *Check return format :arrow_down:*
+    - *args: **flat(bool)** - Optional*
+        
+        - *With **flat=True** return list of users*
+        - *With **flat=None or False** return json format tree*
+
+    - *Check return format :arrow_down:*
 
 - *Get node by id GET /api/tree*
 
-    *args: **id(int)***
+    - *args: **id(int)***
 
-    *Check return format :arrow_down:*
+    - *Check return format :arrow_down:*
 
 - *Insert node POST /api/tree*
 
-    *json: {
-        "parent_id":106,
-        "name":"koban`eze"
-    }*
+    - args: *json: { "parent_id":106 "name":"koban`eze"}*
 
     *Check return format :arrow_down:*
 
@@ -115,6 +115,32 @@ python -m unittest app.tests.test_database -v
             "name": "cats",
             "path": "101"
         }
+    ]
+}
+```
+
+    Query: /api/structure/flat=true
+
+```json
+{
+    "status": true,
+    "users": [
+        {
+            "id": 1,
+            "name": "Кирилл А.Э.",
+            "path": "1"
+        },
+        {
+            "id": 3,
+            "name": "Роман Д.Д.",
+            "path": "1.3"
+        },
+        {
+            "id": 7,
+            "name": "Владислав В.К.",
+            "path": "1.3.7"
+        },
+        ...
     ]
 }
 ```

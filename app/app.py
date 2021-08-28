@@ -14,7 +14,6 @@ def create_app():
     app.config.from_object(Config)
 
     DbMiddleware(sessionmaker(bind=engine)).register(app)
-
     # Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 

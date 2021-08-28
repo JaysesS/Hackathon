@@ -7,6 +7,7 @@ from pprint import pprint
 class PostUserSchema(Schema):
     parent_id = fields.Int(required=True, allow_none=False)
     name = fields.Str(required=True, allow_none=False)
+    position = fields.Str(required=True, allow_none=False)
 
 
 class BaseUserSchema(Schema):
@@ -20,6 +21,7 @@ class UserSchema(BaseUserSchema):
 
     name = fields.Str(required=True, allow_none=False)
     path = fields.Str(required=True, allow_none=False)
+    position = fields.Str(required=True, allow_none=False)
 
 class UserChildrenSchema(UserSchema):
 

@@ -27,8 +27,10 @@ class TreeManage(MethodView):
     def post(self):
         schema = PostNodeSchema()
         data = schema.load(request.get_json())
-        node = Node.insert_node(**data).to_json()
-        return jsonify(status=True, node=node)
+        node = Node.insert_node(**data)
+        if node:
+            return jsonify(status=True, node=node.to_json())
+        return jsonify(status=False, message='Probably parent not found ;c')
 
 
 structure_page = WorkerPresent.as_view('structure')

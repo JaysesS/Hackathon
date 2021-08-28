@@ -1,20 +1,21 @@
 # Hacaton)
 
-Как запустить бд?
+Start db:
 
 ```sh
 cd psqlltree
 docker-compose up -d
 ```
 
-Креды:
+Start app:
 
-    - POSTGRES_USER=flash
-    - POSTGRES_PASSWORD=dydka
-    - POSTGRES_DB=database
-    - ALLOW_EMPTY_PASSWORD=yes
+```sh
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 run.py
+```
 
-Приложение разберёшься)0
 
 Если вдруг есть ошибка с psql ltree, то
 
@@ -29,6 +30,8 @@ create extension ltree;
 ```
 
 Тесты:
+
+Можно использовать для заливки тестовыми данными.
 
 ```
 python -m unittest app.tests.test_database -v

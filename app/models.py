@@ -1,3 +1,5 @@
+from typing import List, Optional
+from flask import g
 from sqlalchemy import Column, Integer, String, Sequence, Index, func, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, remote, foreign, sessionmaker
@@ -5,6 +7,8 @@ from sqlalchemy import func
 from sqlalchemy_utils import LtreeType, Ltree
 from sqlalchemy_utils.types.ltree import LQUERY
 
+import json
+from app.schemas.node import NodeSchema
 from app.config import Config
 
 Base = declarative_base()
@@ -44,6 +48,39 @@ class Node(Base):
         self.path = ltree_id if parent is None else parent.path + ltree_id
 
     __table_args__ = (Index("ix_nodes_path", path, postgresql_using="gist"),)
+
+    def show_json(self):
+        schema = NodeSchema()
+        print(json.dumps(schema.dump(self), indent=4))
+
+    def to_json(self):
+        schema = NodeSchema()
+        return schema.dump(self)
+
+    @staticmethod
+    def nodes_to_json(nodes : List["Node"]) -> dict:
+        schema = NodeSchema()
+        return schema.dump(nodes, many=True)
+
+    @classmethod
+    def get_by_level(cls, level: int) -> List["Node"]:
+        return g.session.query(cls).filter(
+            func.nlevel(cls.path) == level).all()
+
+    @classmethod
+    def get_by_id(cls, id: int) -> "Node":
+        return g.session.query(cls).filter_by(id=id).first()
+
+    @classmethod
+    def insert_node(cls, parent_id: int, name:str) -> Optional["Node"]:
+        parent = cls.get_by_id(parent_id)
+        if parent:
+            node = cls(name= name, parent=parent)
+            g.session.add(node)
+            g.session.commit()
+            return node
+        return None
+
 
     def __repr__(self):
         return 'Node({})'.format(self.name)

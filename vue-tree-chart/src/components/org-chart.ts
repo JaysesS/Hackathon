@@ -3,6 +3,7 @@ import Util from '../base/utils'
 
 class OrgChart {
   d3: any
+  vueParent: any
   width: number
   height: number
   padding: number
@@ -26,7 +27,9 @@ class OrgChart {
   onDrag_: boolean
   dragStartPoint_: { x: number; y: number }
 
-  constructor() {
+  constructor(vueParent: any) {
+    this.vueParent = vueParent;
+    console.log(this.vueParent);
     this.d3 = d3
     this.init()
   }
@@ -43,11 +46,11 @@ class OrgChart {
     this.height = window.innerHeight
     this.padding = 20
     // tree node size
-    this.nodeWidth = 180
-    this.nodeHeight = 280
+    this.nodeWidth = 300
+    this.nodeHeight = 340
     // org unit size
     this.unitPadding = 20
-    this.unitWidth = 140
+    this.unitWidth = 280
     this.unitHeight = 100
     // animation duration
     this.duration = 100
@@ -354,7 +357,7 @@ class OrgChart {
         data.name,
         indexX + self.unitPadding,
         indexY + self.unitPadding,
-        '20px',
+        '24px',
         '#ffffff'
       )
 
@@ -369,16 +372,6 @@ class OrgChart {
           maxWidth,
           20,
           '#000000'
-        )
-      }
-      if (data.subtitle) {
-        Util.text(
-          self.context,
-          data.subtitle,
-          indexX + self.unitPadding,
-          indexY + self.unitPadding + 24 + 20 + 20,
-          '20px',
-          '#ffffff'
         )
       }
     })
@@ -423,10 +416,9 @@ class OrgChart {
       )
       const node = self.colorNodeMap[colorStr]
       if (node) {
-        console.log('click on node: ', node);
-        console.log(node.data()[0]);
-        // self.toggleTreeNode(node.data()[0])
-        self.update(node.data()[0])
+        self.update(node.data()[0]);
+        const personData = Object.assign({}, node.data()[0]['data']);
+        this.vueParent.selectPerson(Object.assign({}, personData));
       }
     })
   }

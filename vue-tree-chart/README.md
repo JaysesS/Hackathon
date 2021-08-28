@@ -14,6 +14,6 @@ npm install
 # serve with hot reload at localhost
 npm run dev
 
-# build for production with minification (build to ./docs folder, which can be auto servered by github page 🤓)
+# build for production
 npm run build
 ```

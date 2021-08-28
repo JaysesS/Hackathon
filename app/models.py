@@ -1,89 +1,125 @@
 from typing import List, Optional
 from flask import g
-from sqlalchemy import Column, Integer, String, Sequence, Index, func, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Sequence, Index, func, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, remote, foreign, sessionmaker
+from sqlalchemy.orm import backref, relationship, remote, foreign, sessionmaker
 from sqlalchemy import func
 from sqlalchemy_utils import LtreeType, Ltree
 from sqlalchemy_utils.types.ltree import LQUERY
 
 import json
-from app.schemas.node import NodeSchema
+from app.schemas.user import UserChildrenSchema, UserSchema
 from app.config import Config
 
 Base = declarative_base()
-engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, **Config.SQLALCHEMY_ENGINE_OPTIONS)
+engine = create_engine(Config.SQLALCHEMY_DATABASE_URI,
+                       **Config.SQLALCHEMY_ENGINE_OPTIONS)
 
 id_seq = Sequence("nodes_id_seq")
+
 
 class User(Base):
     __tablename__ = "user"
 
-    id = Column(Integer, nullable=False, primary_key=True)
-    username = Column(String, nullable=False, unique=True)
-
-    def __repr__(self) -> str:
-        return f"User({self.username})"
-
-
-class Node(Base):
-    __tablename__ = "nodes"
-
     id = Column(Integer, id_seq, primary_key=True)
     name = Column(String, nullable=False)
+    position = Column(String, nullable=False)
+
     path = Column(LtreeType, nullable=False)
 
     parent = relationship(
-        "Node",
+        "User",
         primaryjoin=(remote(path) == foreign(func.subpath(path, 0, -1))),
         backref="children",
         viewonly=True,
     )
 
-    def __init__(self, name, parent=None):
+    def __init__(self, name, position, parent=None):
         _id = engine.execute(id_seq)
         self.id = _id
         self.name = name
+        self.position = position
         ltree_id = Ltree(str(_id))
         self.path = ltree_id if parent is None else parent.path + ltree_id
 
     __table_args__ = (Index("ix_nodes_path", path, postgresql_using="gist"),)
 
     def show_json(self):
-        schema = NodeSchema()
+        schema = UserChildrenSchema()
         print(json.dumps(schema.dump(self), indent=4))
 
     def to_json(self):
-        schema = NodeSchema()
+        schema = UserChildrenSchema()
         return schema.dump(self)
 
     @staticmethod
-    def nodes_to_json(nodes : List["Node"]) -> dict:
-        schema = NodeSchema()
+    def nodes_to_json(nodes: List["User"]) -> dict:
+        schema = UserChildrenSchema()
         return schema.dump(nodes, many=True)
 
     @classmethod
-    def get_by_level(cls, level: int) -> List["Node"]:
+    def get_flat_list(cls) -> List[dict]:
+        schema = UserSchema()
+        return schema.dump(g.session.query(User).all(), many=True)
+
+    @classmethod
+    def get_by_level(cls, level: int) -> List["User"]:
         return g.session.query(cls).filter(
             func.nlevel(cls.path) == level).all()
 
     @classmethod
-    def get_by_id(cls, id: int) -> "Node":
+    def get_by_id(cls, id: int) -> "User":
         return g.session.query(cls).filter_by(id=id).first()
 
     @classmethod
-    def insert_node(cls, parent_id: int, name:str) -> Optional["Node"]:
+    def get_by_name(cls, name: int) -> "User":
+        return g.session.query(cls).filter_by(name=name).first()
+
+    @classmethod
+    def insert_node(cls, parent_id: int, name: str) -> Optional["User"]:
         parent = cls.get_by_id(parent_id)
         if parent:
-            node = cls(name= name, parent=parent)
+            node = cls(name=name, parent=parent)
             g.session.add(node)
             g.session.commit()
             return node
         return None
 
-
     def __repr__(self):
-        return 'Node({})'.format(self.name)
+        return 'User({})'.format(self.name)
+
+
+class Task(Base):
+    __tablename__ = "task"
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    name = Column(String, nullable=False, unique=False)
+    process_name = Column(String, nullable=False, unique=False)
+
+    start_time = Column(Integer, nullable=False)
+    due_time = Column(Integer, nullable=False)
+    end_time = Column(Integer, nullable=True)
+    priority = Column(Integer, nullable=False)
+    var_count = Column(Integer, nullable=False)
+
+    owner_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    assigner_id = Column(Integer, ForeignKey('user.id'), nullable=True)
+
+    owner = relationship(User, foreign_keys=[owner_id], backref='tasks_own')
+    assigner = relationship(
+        User, foreign_keys=[assigner_id], backref='tasks_assign')
+
+    started = Column(Boolean, server_default='t', default=False)
+
+    def __repr__(self) -> str:
+        return f"Task({self.process_name} -> {self.name})"
+
+    def is_started(self):
+        return self.started
+
+    def start(self):
+        self.started = True
+        g.session.commit()
 
 
 def get_session():

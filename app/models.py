@@ -1,5 +1,6 @@
 from typing import List, Optional
 from flask import g
+from datetime import datetime
 from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Sequence, Index, func, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref, relationship, remote, foreign, sessionmaker
@@ -76,10 +77,10 @@ class User(Base):
         return g.session.query(cls).filter_by(name=name).first()
 
     @classmethod
-    def insert_node(cls, parent_id: int, name: str) -> Optional["User"]:
+    def insert_node(cls, parent_id: int, name: str, position: str) -> Optional["User"]:
         parent = cls.get_by_id(parent_id)
         if parent:
-            node = cls(name=name, parent=parent)
+            node = cls(name=name, position=position, parent=parent)
             g.session.add(node)
             g.session.commit()
             return node
@@ -110,6 +111,7 @@ class Task(Base):
         User, foreign_keys=[assigner_id], backref='tasks_assign')
 
     started = Column(Boolean, server_default='t', default=False)
+    was_started = Column(Boolean, server_default='t', default=False)
 
     def __repr__(self) -> str:
         return f"Task({self.process_name} -> {self.name})"
@@ -117,9 +119,33 @@ class Task(Base):
     def is_started(self):
         return self.started
 
+
+    def change_state(self, state):
+        if state == "start":
+            return self.start()
+        return self.stop()
+
     def start(self):
-        self.started = True
-        g.session.commit()
+        if not self.was_started:
+            self.started = True
+            self.was_started = True
+            g.session.commit()
+            return self
+        # TASK WAS STARTED BEFORE
+        return None
+
+    def stop(self):
+        if self.started:
+            self.started = False
+            self.end_time = datetime.now().timestamp()
+            g.session.commit()
+            return self
+        # STOP STOPED TASK??)
+        return None
+
+    @classmethod
+    def get_by_id(cls, id: int) -> "Task":
+        return g.session.query(cls).filter_by(id=id).first()
 
 
 def get_session():

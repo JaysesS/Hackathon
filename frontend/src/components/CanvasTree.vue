@@ -21,7 +21,6 @@ import Vue from 'vue'
 import { generateOrgChartData, Data } from '../base/data-generator'
 import { getRequest } from '../base/http-work'
 import Person from './Person.vue'
-import { CONST } from './consts.js'
 
 export default Vue.extend({
   name: 'org-chart',

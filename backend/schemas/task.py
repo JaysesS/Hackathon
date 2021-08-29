@@ -90,12 +90,11 @@ class TaskAnalysisSchema(Schema):
     @post_dump
     def _post_dump(self, data, **kwargs):
         owner = User.get_by_id(data["owner_id"])
-        assigner = User.get_by_id(data["assigner_id"])
-        if owner and assigner:
+        if owner:
             data["owner"] = owner.name
-            data["assigner"] = assigner.name
             del data["owner_id"]
             del data["assigner_id"]
+        
         if data['start_time'] and data['due_time']:
             data['start_time'] = datetime.fromtimestamp(data['start_time'])
             data['due_time'] = datetime.fromtimestamp(data['due_time'])

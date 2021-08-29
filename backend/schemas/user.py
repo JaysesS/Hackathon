@@ -16,6 +16,22 @@ class BaseUserSchema(Schema):
     id = fields.Int(required=True, allow_none=False)
 
 
+class UserAnalysisSchema(BaseUserSchema):
+
+    name = fields.Str(required=True, allow_none=False)
+    path = fields.Str(required=True, allow_none=False)
+    position = fields.Str(required=True, allow_none=False)
+    tasks_assign = fields.List(
+        fields.Raw, required=True, allow_none=False, dump_only=True)
+    rank = fields.Int(required=False, allow_none=False)
+
+    @post_dump
+    def _count_tasks(self, data, **kwargs):
+        data["task_count"] = len(data["tasks_assign"])
+        del data["tasks_assign"]
+        return data
+
+
 class UserSchema(BaseUserSchema):
 
     class Meta:

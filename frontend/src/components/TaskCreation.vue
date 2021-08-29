@@ -100,21 +100,21 @@
           >{{person.name}}</option>
         </select>
       </div>
-      <div class="input-wrapper">
-        <p
-        >
-          Ответственный
-        </p>
-        <select
-          class="input"
-          v-model="assigner_id"
-        >
-          <option
-            v-for="person in persons"
-            :value="person.id"
-          >{{person.name}}</option>
-        </select>
-      </div>
+      <!--      <div class="input-wrapper">-->
+      <!--        <p-->
+      <!--        >-->
+      <!--          Ответственный-->
+      <!--        </p>-->
+      <!--        <select-->
+      <!--          class="input"-->
+      <!--          v-model="assigner_id"-->
+      <!--        >-->
+      <!--          <option-->
+      <!--            v-for="person in persons"-->
+      <!--            :value="person.id"-->
+      <!--          >{{person.name}}</option>-->
+      <!--        </select>-->
+      <!--      </div>-->
       <button
         :class="['main-btn', {'disabled': disabled}]"
         :disabled="disabled || taskCreated"
@@ -126,6 +126,16 @@
       >
         Задача успешно создана
       </span>
+    </div>
+
+    <div
+      v-if=""
+      class="task-inputs"
+    >
+      <persons-list
+        :person-list="personList"
+        :task-id="createdTaskId"
+      ></persons-list>
     </div>
 
   </div>
@@ -142,9 +152,13 @@
 //   assigner_id = fields.Int(required=True, allow_none=False) кто выполняет
 import {getRequest, postRequest} from "../base/http-work";
 import {CONST} from "./consts";
+import PersonsList from "./PersonsList.vue";
 
 export default {
   name: "TaskCreation",
+  components: {
+    'persons-list': PersonsList
+  },
   data: () => {
     return {
       persons: [],
@@ -159,9 +173,12 @@ export default {
       owner_id: null,
       assigner_id: null,
 
+      personList: [{name: 'Pupa', rank: 3, id: 666}, {name: 'Lupa', rank: 1}, {name: 'Zupa'}],
+
       backendURL: CONST.backedRoute,
 
-      taskCreated: false
+      taskCreated: false,
+      createdTaskId: null,
 
     }
   },
@@ -177,7 +194,6 @@ export default {
         priority: +this.priority,
         var_count: +this.varCount,
         owner_id: +this.owner_id,
-        assigner_id: +this.assigner_id
       }
       postRequest(`${this.backendURL}/api/task`, body)
         .then( res => {
@@ -185,7 +201,22 @@ export default {
             alert('Всё плохо)');
             return;
           }
+          console.log(res);
+          this.createdTaskId = res['body']['task_id'];
           this.taskCreated = true;
+          console.log(this.createdTaskId);
+
+          getRequest(`${this.backendURL}/api/analysis`, {id: this.createdTaskId}, {})
+            .then((res) => {
+            if (!res['status'] || !res['body']['status']) {
+              alert('Всё плохо)')
+              return
+            }
+            console.log(res);
+            this.personList = res['body']['users'].sort((left, right) => {
+              return right.rank - left.rank;
+            });
+          })
         })
     }
   },
@@ -209,8 +240,7 @@ export default {
         this.dueDateString.length === 0 ||
         this.priority === 0 ||
         this.varCount < 0 ||
-        !this.owner_id ||
-        !this.assigner_id;
+        !this.owner_id;
     }
   }
 }
@@ -221,6 +251,8 @@ p {
   margin: 0;
 }
 .creation-task-view {
+  display: flex;
+  justify-content: space-between;
   padding: 2em 2em;
 }
 .task-inputs {
@@ -232,7 +264,7 @@ p {
   display: flex;
   flex-direction: column;
   gap: 0.4em;
-  width: 26em;
+  width: 30em;
 }
 .input-wrapper {
   padding: 0.2em;

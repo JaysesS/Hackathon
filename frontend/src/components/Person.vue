@@ -20,8 +20,9 @@
       <p>Задачи</p>
       <!--      v-for="task in person.tasks"-->
       <task
-        v-for="task in [{name: 'task1'}, {name: 'task1'}]"
+        v-for="task in tasks"
         :task="task"
+        class="task"
       ></task>
     </div>
   </div>
@@ -29,6 +30,9 @@
 
 <script>
 import Task from './Task.vue';
+import {getRequest} from "../base/http-work";
+import {CONST} from "./consts";
+
 export default {
   name: "Person",
   components: {
@@ -40,9 +44,40 @@ export default {
       required: true
     }
   },
+  data: () => {
+    return {
+      tasks: [],
+      backendURL: CONST.backedRoute,
+
+      oldPersonId: -1,
+    }
+  },
   methods: {
-    goToPerson(person){
+    goToPerson(person) {
       this.$emit('go-to-person', person);
+    },
+    updateTasks() {
+      getRequest(`${this.backendURL}/api/task`, { assigner_id: this.person.id }, {})
+        .then(
+          (res) => {
+            if (!res['status'] || !res['body']['status']) {
+              alert('Всё плохо)')
+              return
+            }
+            console.log(res);
+            this.tasks = res['body']['tasks'];
+          }
+        )
+    }
+  },
+  created() {
+    this.updateTasks();
+  },
+
+  updated() {
+    if (this.oldPersonId !== this.person.id) {
+      this.oldPersonId = this.person.id;
+      this.updateTasks();
     }
   }
 }
@@ -69,11 +104,15 @@ p {
 }
 .tasks-wrapper {
   padding: 0.6em;
-  height: 20em;
+  height: 36em;
   min-height: 300px;
   overflow-y: auto;
   border: 2px solid #2196f3;
   border-radius: 6px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
 }
 .sub-person {
   border-radius: 6px;

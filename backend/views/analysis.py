@@ -5,7 +5,6 @@ from marshmallow.utils import pprint
 from schemas.task import TaskAnalysisSchema, TaskSelectSchema
 from schemas.user import UserAnalysisSchema
 from models import Task, User
-import numpy as np
 from analysis import model, scaler, helpers
 
 

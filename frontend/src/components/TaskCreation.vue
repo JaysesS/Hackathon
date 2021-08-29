@@ -134,7 +134,7 @@
     >
       <persons-list
         :person-list="personList"
-        :created-task-id="createdTaskId"
+        :task-id="createdTaskId"
       ></persons-list>
     </div>
 
@@ -201,9 +201,10 @@ export default {
             alert('Всё плохо)');
             return;
           }
-
+          console.log(res);
           this.createdTaskId = res['body']['task_id'];
           this.taskCreated = true;
+          console.log(this.createdTaskId);
 
           getRequest(`${this.backendURL}/api/analysis`, {id: this.createdTaskId}, {})
             .then((res) => {
@@ -212,7 +213,9 @@ export default {
               return
             }
             console.log(res);
-            this.personList = res['body']['users'];
+            this.personList = res['body']['users'].sort((left, right) => {
+              return right.rank - left.rank;
+            });
           })
         })
     }

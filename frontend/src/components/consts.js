@@ -1,4 +1,4 @@
 
 export const CONST = {
-    backedRoute: ''
+    backedRoute: BACKEND_URL
   }

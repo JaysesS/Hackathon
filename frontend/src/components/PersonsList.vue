@@ -71,7 +71,7 @@ export default {
       };
       postRequest(`${this.BACKEND_URL}/api/task/manage`, body)
         .then( r => {
-          console.log(r);
+          this.$router.push('/');
         });
     }
   }
@@ -107,5 +107,6 @@ span.ranked {
   background-size: contain;
   position: absolute;
   right: 0.4em;
+  top: 0.4em;
 }
 </style>

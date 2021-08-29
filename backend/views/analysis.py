@@ -25,12 +25,14 @@ class AnalysisView(MethodView):
         users = g.session.query(User).all()
         model_result = []
         for user in users:
+            if not analysis_data.task_name in helpers.users_pressets.get(user.name).keys():
+                continue
             analysis_data.assigner = user.name
             processing_val = helpers.processing_val(
                 [analysis_data], len(user.tasks_assign), model, scaler)
             predict = model.predict(processing_val)
-            # print("Username:", user.name, "Taks:", len(user.tasks_assign), "Work time:", timedelta(
-            #     seconds=int(predict[0])), "Work time task:",analysis_data.due_time - analysis_data.start_time)
+            print("Username:", user.name, "Taks:", len(user.tasks_assign), "Work time:", timedelta(
+                seconds=int(predict[0])), "Work time task:",analysis_data.due_time - analysis_data.start_time)
             model_result.append(dict(
                 user=user,
                 predict=int(predict[0])

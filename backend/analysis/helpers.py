@@ -24,6 +24,8 @@ def get_global_start_end():
 def generate_random_val(target, rel_dev, only_positive=None):
     sign = 1
     shift = 0
+    if rel_dev > 100:
+        return target * 100
     if only_positive is None:
         shift = 0.5
     elif only_positive:
@@ -264,3 +266,9 @@ def processing_val(task_set, active_task_count, model, scaler):
 
     proc_vals_scaled = scaler.transform(proc_vals)
     return proc_vals_scaled
+    
+    
+
+    
+
+        

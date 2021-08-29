@@ -9,8 +9,8 @@ from sqlalchemy_utils import LtreeType, Ltree
 from sqlalchemy_utils.types.ltree import LQUERY
 
 import json
-from app.schemas.user import UserChildrenSchema, UserSchema
-from app.config import Config
+from schemas.user import UserChildrenSchema, UserSchema
+from config import Config
 
 Base = declarative_base()
 engine = create_engine(Config.SQLALCHEMY_DATABASE_URI,
@@ -25,7 +25,6 @@ class User(Base):
     id = Column(Integer, id_seq, primary_key=True)
     name = Column(String, nullable=False)
     position = Column(String, nullable=False)
-
     path = Column(LtreeType, nullable=False)
 
     parent = relationship(

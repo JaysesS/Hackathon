@@ -3,10 +3,10 @@ from unittest import TestCase
 from flask.globals import g
 from datetime import datetime, timedelta
 from sqlalchemy import func
-from app.app import create_app
+from app import create_app
 import json
 
-from app.models import User, Task, get_session, Base, engine
+from models import User, Task, get_session, Base, engine
 
 
 class Test_DB(TestCase):
@@ -34,9 +34,9 @@ class Test_DB(TestCase):
         # 2
         frontend = User(name='Петя',
                         position="Фронт", parent=director)
-        backend = User(name='Костя',
+        backend = User(name='Глеб',
                        position="Архитектор", parent=director)
-        market = User(name='Катя',
+        market = User(name='Соня',
                       position="Маркетинг", parent=director)
         devops = User(name='Ванёк',
                       position="devOps", parent=director)
@@ -65,10 +65,10 @@ class Test_DB(TestCase):
     def fill_test_tasks(self):
         director = User.get_by_name("Василёк")
         igor_backend = User.get_by_name("Игорь")
-        kost = User.get_by_name("Костя")
+        gleb = User.get_by_name("Глеб")
         eremey = User.get_by_name("Еремей")
         petr = User.get_by_name("Петя")
-        katya = User.get_by_name("Катя")
+        sonya = User.get_by_name("Соня")
         denis = User.get_by_name("Ден")
         task1 = Task(
             name="Фикс чего-то там",
@@ -78,19 +78,19 @@ class Test_DB(TestCase):
             start_time=datetime.now().timestamp(),
             due_time=(datetime.now() + timedelta(hours=8)).timestamp(),
             end_time=(datetime.now() + timedelta(hours=6)).timestamp(),
-            priority=75,
+            priority=8,
             var_count=2
         )
         task2 = Task(
             name="Сделай гугл",
             process_name="Разработка",
             owner_id=director.id,
-            assigner_id=kost.id,
+            assigner_id=gleb.id,
             start_time=datetime.now().timestamp(),
             due_time=(datetime.now() + timedelta(hours=4)).timestamp(),
             end_time=(datetime.now() +
                       timedelta(hours=2)).timestamp(),
-            priority=80,
+            priority=6,
             var_count=228
         )
         task3 = Task(
@@ -106,18 +106,30 @@ class Test_DB(TestCase):
             var_count=100
         )
         task4 = Task(
-            name="Нарисуй красиво",
-            process_name="Сбор урожая",
-            owner_id=katya.id,
-            assigner_id=denis.id,
+            name="проверка склада",
+            process_name="Заказ товара",
+            owner_id=denis.id,
+            assigner_id=sonya.id,
             start_time=datetime.now().timestamp(),
             due_time=(datetime.now() + timedelta(hours=1)).timestamp(),
             end_time=(datetime.now() +
                       timedelta(minutes=30)).timestamp(),
-            priority=20,
+            priority=9,
             var_count=1
         )
-        self.session.add_all([task1, task2, task3, task4])
+        task5 = Task(
+            name="Оформить заявку",
+            process_name="закупка",
+            owner_id=denis.id,
+            assigner_id=sonya.id,
+            start_time=datetime.now().timestamp(),
+            due_time=(datetime.now() + timedelta(hours=2)).timestamp(),
+            end_time=(datetime.now() +
+                      timedelta(minutes=30)).timestamp(),
+            priority=5,
+            var_count=1
+        )
+        self.session.add_all([task1, task2, task3, task4, task5])
         self.session.commit()
 
     @mock_g
@@ -134,7 +146,7 @@ class Test_DB(TestCase):
         self.fill_test_users()
         self.fill_test_tasks()
         tasks = self.session.query(Task).all()
-        self.assertEqual(len(tasks), 4)
+        self.assertEqual(len(tasks), 5)
         director = User.get_by_name("Василёк")
         self.assertEqual(len(director.tasks_assign), 0)
         self.assertEqual(len(director.tasks_own), 2)

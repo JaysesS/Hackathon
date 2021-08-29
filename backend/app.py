@@ -2,10 +2,10 @@ from flask import Flask
 from flask_cors import CORS
 from sqlalchemy.orm import sessionmaker
 
-from app.middleware import DbMiddleware
-from app.models import engine, Base
-from app.config import Config
-from app.views import api_bp
+from middleware import DbMiddleware
+from models import engine, Base
+from config import Config
+from views import api_bp
 
 
 def create_app():

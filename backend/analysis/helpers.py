@@ -7,8 +7,8 @@ import numpy as np
 
 from sklearn.metrics import mean_squared_error, mean_absolute_error, max_error, r2_score
 
-import consts
-from dto import TaskRawData
+from analysis import consts
+from analysis.dto import TaskRawData
 
 
 fake = Faker()

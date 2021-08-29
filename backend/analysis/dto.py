@@ -13,6 +13,7 @@ class TaskRawData:
     due_time: datetime
     priority: int
     var_count: int
+    is_bind: bool
     
     def get_as_row(self, column_names):
         row = []

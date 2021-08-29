@@ -1,21 +1,10 @@
 # Hacaton)
 
-Start db:
+## Start app
 
 ```sh
-cd psqlltree
-docker-compose up -d
+docker-compose up -d --build
 ```
-
-Start app:
-
-```sh
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python3 run.py
-```
-
 
 Если вдруг есть ошибка с psql ltree, то
 
@@ -27,14 +16,6 @@ psql postgresql://flash:dydka@localhost:5432/database
 create extension ltree;
 
 если написать еще раз create extension ltree; то напишет, мол уже установлено.
-```
-
-Тесты:
-
-Можно использовать для заливки тестовыми данными.
-
-```
-python -m unittest app.tests.test_database -v
 ```
 
 

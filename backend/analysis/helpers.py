@@ -264,9 +264,3 @@ def processing_val(task_set, active_task_count, model, scaler):
 
     proc_vals_scaled = scaler.transform(proc_vals)
     return proc_vals_scaled
-    
-    
-
-    
-
-        

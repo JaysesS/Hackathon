@@ -28,8 +28,8 @@ class AnalysisView(MethodView):
             processing_val = helpers.processing_val(
                 [analysis_data], len(user.tasks_assign), model, scaler)
             predict = model.predict(processing_val)
-            print(user.name, timedelta(
-                seconds=int(predict[0])), analysis_data.due_time - analysis_data.start_time)
+            print("Username:", user.name, "Taks:", len(user.tasks_assign), "Work time:", timedelta(
+                seconds=int(predict[0])), "Work time task:",analysis_data.due_time - analysis_data.start_time)
         return jsonify(status=True, message="ok")
 
 

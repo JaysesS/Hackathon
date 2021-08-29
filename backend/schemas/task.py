@@ -92,6 +92,7 @@ class TaskAnalysisSchema(Schema):
         owner = User.get_by_id(data["owner_id"])
         if owner:
             data["owner"] = owner.name
+            data["assigner"] = None
             del data["owner_id"]
             del data["assigner_id"]
         

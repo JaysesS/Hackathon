@@ -7,7 +7,7 @@
         text
         style="margin-left: 32px;"
         :color="selectedMenu === 'canvas' ? 'info' : ''"
-      >Структура организации</v-btn
+        >Структура организации</v-btn
       >
       <v-btn
         class="menu-item"
@@ -15,7 +15,15 @@
         text
         style="margin-left: 32px;"
         :color="selectedMenu === 'creation' ? 'info' : ''"
-      >Создание задачи</v-btn
+        >Создание задачи</v-btn
+      >
+      <v-btn
+        class="menu-item"
+        :to="Cons.TASK_LIST"
+        text
+        style="margin-left: 32px;"
+        :color="selectedMenu === 'taskList' ? 'info' : ''"
+        >Неназначенные задачи</v-btn
       >
     </v-toolbar>
     <router-view style="width: 100%; height: 100%;" />
@@ -46,16 +54,21 @@ export default {
       this.$router.push('main')
     },
     updateSelectedMenu() {
-      switch (this.$route.path){
+      switch (this.$route.path) {
         case `/${Cons.CANVAS_TREE}`:
-          this.selectedMenu = 'canvas';
-          break;
+          this.selectedMenu = 'canvas'
+          break
         case `/${Cons.TASK_CREATION}`:
-          this.selectedMenu = 'creation';
-          break;
+          this.selectedMenu = 'creation'
+          break
+        case `/${Cons.TASK_LIST}`:
+          this.selectedMenu = 'taskList'
+          break
+
+
         default:
-          this.selectedMenu = 'canvas';
-          break;
+          this.selectedMenu = 'canvas'
+          break
       }
     }
   }

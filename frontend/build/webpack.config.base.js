@@ -1,6 +1,9 @@
 const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack');
+
+const BACKEND_URL = process.env.BACKEND_URL;
 
 module.exports = {
   entry: './src/demo/main.ts',
@@ -42,7 +45,10 @@ module.exports = {
       filename: 'index.html',
       template: './template/index.html',
       inject: true
-    })
+    }),
+    new webpack.DefinePlugin({
+      BACKEND_URL: BACKEND_URL
+    }),
   ],
   resolve: {
     extensions: ['.ts', '.js', '.vue', '.json'],

@@ -337,6 +337,15 @@ class OrgChart {
       const treeNode = node.data()[0]
       const data = treeNode.data
       self.context.fillStyle = '#3ca0ff'
+      if (data.task_count) {
+        if (data.task_count < 3) {
+          self.context.fillStyle = '#129305'
+        } else if (data.task_count < 6) {
+          self.context.fillStyle = '#a87011'
+        } else {
+          self.context.fillStyle = '#c20808'
+        }
+      }
       const indexX = Number(node.attr('x')) - self.unitWidth / 2
       const indexY = Number(node.attr('y')) - self.unitHeight / 2
 
@@ -369,6 +378,17 @@ class OrgChart {
           data.position,
           indexX + self.unitPadding,
           indexY + self.unitPadding + 24,
+          maxWidth,
+          20,
+          '#000000'
+        )
+      }
+      if (data.task_count) {
+        Util.wrapText(
+          self.context,
+          `Загруженность: ${data.task_count} задач`,
+          indexX + self.unitPadding,
+          indexY + self.unitPadding + 24 + 24,
           maxWidth,
           20,
           '#000000'

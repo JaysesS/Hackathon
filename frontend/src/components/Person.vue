@@ -3,7 +3,7 @@
     <h2 class="center-text">{{person.name}}</h2>
     <p>Должность: {{person.position}}</p>
     <div
-      v-if="person.children.length !== 0"
+      v-if="false && person.children.length !== 0"
       class="children-wrapper"
     >
       <p>Подчинённые:</p>

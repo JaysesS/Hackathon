@@ -21,6 +21,7 @@ import Vue from 'vue';
 import { generateOrgChartData, Data } from '../base/data-generator';
 import { getRequest } from '../base/http-work';
 import Person from './Person.vue';
+import {CONST} from './consts.js';
 
 export default Vue.extend({
   name: 'org-chart',
@@ -35,7 +36,7 @@ export default Vue.extend({
       selectedPerson : {},
       personIsSelected: false,
 
-      backendURL: 'http://172.24.8.169:5000'
+      backendURL: CONST.backedRoute
     }
   },
   created() {

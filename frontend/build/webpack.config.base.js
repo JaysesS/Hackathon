@@ -42,7 +42,7 @@ module.exports = {
       filename: 'index.html',
       template: './template/index.html',
       inject: true
-    }),
+    })
   ],
   resolve: {
     extensions: ['.ts', '.js', '.vue', '.json'],

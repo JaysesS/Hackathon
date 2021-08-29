@@ -23,7 +23,7 @@
         text
         style="margin-left: 32px;"
         :color="selectedMenu === 'taskList' ? 'info' : ''"
-        >Неназначенные задачи</v-btn
+        >Активные задачи</v-btn
       >
     </v-toolbar>
     <router-view style="width: 100%; height: 100%;" />

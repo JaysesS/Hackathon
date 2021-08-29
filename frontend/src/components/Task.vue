@@ -11,7 +11,9 @@
         Срок задачи: {{ new Date(task.due_time * 1000).toLocaleString('Ru') }}
       </span>
     </div>
-    <div>
+    <div
+      v-if="task.assigner_id"
+    >
       <p>Ответственный</p>
       <input disabled :value="assignerName" />
     </div>
@@ -21,7 +23,7 @@
     </div>
     <p>Приоритет: {{ task.priority }}</p>
     <p>Количество переменных: {{ task.var_count }}</p>
-    <button class="main-btn" @click="setTask">Назначить задачу</button>
+<!--    <button class="main-btn" @click="setTask">Назначить задачу</button>-->
   </div>
 </template>
 

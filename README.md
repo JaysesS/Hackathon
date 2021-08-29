@@ -63,6 +63,20 @@ python -m unittest app.tests.test_database -v
 
     *Check return format :arrow_down:*
 
+- *Delete node by id GET /api/tree*
+
+    - *args: **id(int)***
+
+    - *Return*
+
+    ```json
+    {
+        "message": "Node was removed",
+        "node_id": 19, // id удалённой ноды
+        "status": true
+    }
+    ```
+
 - *Get task GET /api/task*
 
     - args: **Опционально** фильтрация по..
@@ -90,8 +104,8 @@ python -m unittest app.tests.test_database -v
         "process_name": str,
         "start_time": int,
         "due_time": int,
-        "owner_id": int, # Кто ставит задачу
-        "assigner_id": int, # Кому ставит
+        "owner_id": int, // Кто ставит задачу
+        "assigner_id": int, // Кому ставит
         "priority": int, 
         "var_count": int
     }
@@ -102,7 +116,7 @@ python -m unittest app.tests.test_database -v
     ```json
     {
         "status": true,
-        "task_id": 5 # new task id
+        "task_id": 5 // new task id
     }
     ```
 
@@ -116,7 +130,7 @@ python -m unittest app.tests.test_database -v
     {
         "message": "Was removed",
         "status": true,
-        "task_id": 6 # id удалённой задачи
+        "task_id": 6 // id удалённой задачи
     }
     ```
 
@@ -128,10 +142,10 @@ python -m unittest app.tests.test_database -v
     - *json:*
     ```json
         {   
-            "id": int, # required task id
-            "assigner_id": int, # optional
-            "owner_id": int, # optional
-            "state" : "start" or "stop" # optional
+            "id": int, // required task id
+            "assigner_id": int, // optional
+            "owner_id": int, // optional
+            "state" : "start" or "stop" // optional
         }
     ```
 
@@ -152,21 +166,24 @@ python -m unittest app.tests.test_database -v
                     "id": 3,
                     "name": "Костя",
                     "path": "1.3",
-                    "position": "Архитектор"
+                    "position": "Архитектор",
+                    "task_count": 1
                 },
                 {
                     "children": [],
                     "id": 2,
                     "name": "Петя",
                     "path": "1.2",
-                    "position": "Фронт"
+                    "position": "Фронт",
+                    "task_count": 2
                 },
                 {
                     "children": [],
                     "id": 4,
                     "name": "Катя",
                     "path": "1.4",
-                    "position": "Маркетинг"
+                    "position": "Маркетинг",
+                    "task_count": 4
                 },
                 {
                     "children": [
@@ -175,26 +192,30 @@ python -m unittest app.tests.test_database -v
                             "id": 12,
                             "name": "Абстрактный джун devopa",
                             "path": "1.5.12",
-                            "position": "devOPs"
+                            "position": "devOPs",
+                            "task_count": 0
                         }
                     ],
                     "id": 5,
                     "name": "Ванёк",
                     "path": "1.5",
-                    "position": "devOps"
+                    "position": "devOps",
+                    "task_count": 0
                 },
                 {
                     "children": [],
                     "id": 6,
                     "name": "Ден",
                     "path": "1.6",
-                    "position": "Десигн"
+                    "position": "Десигн",
+                    "task_count": 0
                 }
             ],
             "id": 1,
             "name": "Василёк",
             "path": "1",
-            "position": "Директор"
+            "position": "Директор",
+            "task_count": 1
         }
     ]
 }
@@ -209,17 +230,20 @@ python -m unittest app.tests.test_database -v
         {
             "id": 1,
             "name": "Кирилл А.Э.",
-            "path": "1"
+            "path": "1",
+            "task_count": 1
         },
         {
             "id": 3,
             "name": "Роман Д.Д.",
-            "path": "1.3"
+            "path": "1.3",
+            "task_count": 0
         },
         {
             "id": 7,
             "name": "Владислав В.К.",
-            "path": "1.3.7"
+            "path": "1.3.7",
+            "task_count": 1
         },
         ...
     ]
@@ -236,7 +260,8 @@ python -m unittest app.tests.test_database -v
         "children": [],
         "id": 106,
         "name": "bengal_tigers",
-        "path": "101.102.106"
+        "path": "101.102.106",
+        "task_count": 2
     },
     "status": true
 }
@@ -255,14 +280,15 @@ python -m unittest app.tests.test_database -v
         "children": [],
         "id": 107,
         "name": "koban`eze",
-        "path": "101.102.106.107"
+        "path": "101.102.106.107",
+        "task_count": 0
     },
     "status": true
 }
 ```
 
 
-**Get node by id** return:
+**Get task with filter** return:
 
     Query: /api/task?process_name=Поддержка&id=1
 

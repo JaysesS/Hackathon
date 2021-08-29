@@ -101,4 +101,5 @@ class TaskAnalysisSchema(Schema):
             data['due_time'] = datetime.fromtimestamp(data['due_time'])
         if data['end_time']:
             data['end_time'] = datetime.fromtimestamp(data['end_time'])
+        data['is_bind'] = True
         return TaskRawData(**data)

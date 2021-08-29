@@ -1,6 +1,6 @@
 <template>
   <div id="org-chart-container">
-    <div :class="['menu-container', {'close': !panelOpen}]">
+    <div :class="['menu-container', { close: !panelOpen }]">
       <button
         ref="openClosePanelBtn"
         class="open-close-panel-btn open"
@@ -16,27 +16,27 @@
 </template>
 
 <script lang="ts">
-import OrgChart from './org-chart';
-import Vue from 'vue';
-import { generateOrgChartData, Data } from '../base/data-generator';
-import { getRequest } from '../base/http-work';
-import Person from './Person.vue';
-import {CONST} from './consts.js';
+import OrgChart from './org-chart'
+import Vue from 'vue'
+import { generateOrgChartData, Data } from '../base/data-generator'
+import { getRequest } from '../base/http-work'
+import Person from './Person.vue'
+import { CONST } from './consts.js'
 
 export default Vue.extend({
   name: 'org-chart',
   components: {
-    'person': Person
+    person: Person
   },
   data() {
     return {
       panelOpen: false,
       data: null,
       orgChart: null,
-      selectedPerson : {},
+      selectedPerson: {},
       personIsSelected: false,
 
-      backendURL: CONST.backedRoute
+      backendURL: ''
     }
   },
   created() {
@@ -51,10 +51,10 @@ export default Vue.extend({
       console.log(res)
       this.tree = res['body']['tree']
       this.data = this.tree[0]
-      console.log(this.data);
+      console.log(this.data)
 
-      this.orgChart = new OrgChart(this);
-      this.orgChart.draw(this.data);
+      this.orgChart = new OrgChart(this)
+      this.orgChart.draw(this.data)
     })
   },
   methods: {
@@ -72,14 +72,14 @@ export default Vue.extend({
       this.orgChart.draw(this.data)
     },
     selectPerson(person) {
-      if (!this.panelOpen) this.$refs['openClosePanelBtn'].click();
-      this.selectedPerson = person;
-      this.personIsSelected = Object.keys(this.selectedPerson).length !== 0;
+      if (!this.panelOpen) this.$refs['openClosePanelBtn'].click()
+      this.selectedPerson = person
+      this.personIsSelected = Object.keys(this.selectedPerson).length !== 0
     },
-    openClosePanel(e){
-      e.target.classList.toggle('open');
-      e.target.classList.toggle('close');
-      this.panelOpen = !this.panelOpen;
+    openClosePanel(e) {
+      e.target.classList.toggle('open')
+      e.target.classList.toggle('close')
+      this.panelOpen = !this.panelOpen
     }
   }
 })
@@ -133,11 +133,10 @@ export default Vue.extend({
   margin-left: auto;
 }
 .open-close-panel-btn.open {
-  background-image: url("../assets/right-arrow.png");
-
+  background-image: url('../assets/right-arrow.png');
 }
 .open-close-panel-btn.close {
-  background-image: url("../assets/right-arrow.png");
+  background-image: url('../assets/right-arrow.png');
   -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
   -ms-transform: rotate(180deg);

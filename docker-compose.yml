@@ -35,7 +35,6 @@ services:
             - project_network
 
     backend: 
-
         build:
             context: ./backend
             dockerfile: Dockerfile
@@ -50,6 +49,22 @@ services:
             - database
         environment: 
             - POSTGRES_HOST=database
+        networks:
+            - project_network
+
+    static: 
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        container_name: STATIC_CONTAINER
+        depends_on: 
+            - backend
+        links: 
+            - backend
+        expose:
+          - "80"
+        ports:
+          - "80:80"
         networks:
             - project_network
 

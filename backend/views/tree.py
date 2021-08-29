@@ -1,9 +1,9 @@
 from flask.views import MethodView
 from flask import jsonify, request
 
-from app.schemas.user import BaseUserSchema, PostUserSchema
-from app.schemas.structure import StructureSchema
-from app.models import User
+from schemas.user import BaseUserSchema, PostUserSchema
+from schemas.structure import StructureSchema
+from models import User
 
 
 class StructurePresent(MethodView):

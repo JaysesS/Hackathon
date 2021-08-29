@@ -1,6 +1,7 @@
 from flask.views import MethodView
 from flask import jsonify
 
+
 class IsWorkView(MethodView):
 
     methods = ['GET']

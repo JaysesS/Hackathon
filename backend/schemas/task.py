@@ -1,7 +1,8 @@
 from datetime import datetime
 from marshmallow import Schema, fields, validate
 from marshmallow.decorators import post_dump, post_load
-from app.models import User
+from models import User
+from analysis.dto import TaskRawData
 
 
 class TaskSchema(Schema):
@@ -100,4 +101,4 @@ class TaskAnalysisSchema(Schema):
             data['due_time'] = datetime.fromtimestamp(data['due_time'])
         if data['end_time']:
             data['end_time'] = datetime.fromtimestamp(data['end_time'])
-        return data
+        return TaskRawData(**data)

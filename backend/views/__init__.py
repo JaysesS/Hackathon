@@ -1,8 +1,8 @@
 from flask import Blueprint
-from app.views.is_work import index_page
-from app.views.tree import structure_page, tree_page
-from app.views.task import task_page, task_manage_page
-from app.views.analysis import analysis_page
+from views.is_work import index_page
+from views.tree import structure_page, tree_page
+from views.task import task_page, task_manage_page
+from views.analysis import analysis_page
 
 api_bp = Blueprint(
     'api', __name__,

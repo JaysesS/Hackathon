@@ -1,8 +1,8 @@
 from flask.globals import request
 from flask.views import MethodView
 from flask import jsonify, g
-from app.models import Task
-from app.schemas.task import TaskSchema, TaskFilterSchema, TaskDeleteSchema, TaskActionSchema
+from models import Task
+from schemas.task import TaskSchema, TaskFilterSchema, TaskDeleteSchema, TaskActionSchema
 
 
 class TaskPresent(MethodView):

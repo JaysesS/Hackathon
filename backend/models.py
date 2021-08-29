@@ -52,6 +52,10 @@ class User(Base):
         schema = UserChildrenSchema()
         return schema.dump(self)
 
+    def delete(self):
+        g.session.delete(self)
+        g.session.commit()
+
     @staticmethod
     def nodes_to_json(nodes: List["User"]) -> dict:
         schema = UserChildrenSchema()

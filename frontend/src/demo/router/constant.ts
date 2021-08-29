@@ -1,0 +1,5 @@
+export const SVG_TREE = 'svgTree'
+export const CANVAS_TREE = 'canvasTree'
+export const JSON_VIEWER = 'jsonViewer'
+export const TASK_CREATION = 'creation'
+export const TASK_LIST = 'taskList'

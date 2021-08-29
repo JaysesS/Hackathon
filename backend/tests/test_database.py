@@ -33,29 +33,29 @@ class Test_DB(TestCase):
         director = User(name='Василёк', position="Директор")
         # 2
         frontend = User(name='Петя',
-                        position="Фронт", parent=director)
+                        position="Разработчик", parent=director)
         backend = User(name='Глеб',
-                       position="Архитектор", parent=director)
+                       position="Разработчик", parent=director)
         market = User(name='Соня',
-                      position="Маркетинг", parent=director)
+                      position="Менеджер", parent=director)
         devops = User(name='Ванёк',
-                      position="devOps", parent=director)
+                      position="Разработчик", parent=director)
         design = User(name='Ден',
-                      position="Десигн", parent=director)
+                      position="Разработчик", parent=director)
         # 3
         backend2 = User(name='Игорь',
-                        position="Писатель питона", parent=backend)
+                        position="Разработчик", parent=backend)
         tester = User(name='Абстрактный тестировщик',
-                      position="Тестер питона", parent=backend)
+                      position="Тестировщик", parent=backend)
         frontend2 = User(name='Еремей',
-                         position="Фронт", parent=frontend)
+                         position="Разработчик", parent=frontend)
         # 4
         backend3 = User(name='Абстрактный джун питона',
-                        position="Писатель питона", parent=backend2)
+                        position="Стажер", parent=backend2)
         frontend3 = User(name='Абстрактный джун JS\'a',
-                         position="Фронт", parent=frontend2)
+                         position="Стажер", parent=frontend2)
         devops2 = User(name='Абстрактный джун devopa',
-                      position="devOps", parent=devops)
+                      position="Стажер", parent=devops)
 
         users = [director, backend, backend2, frontend, frontend2,
                  market, tester, devops, design, backend3, frontend3, devops2]

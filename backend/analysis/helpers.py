@@ -7,8 +7,8 @@ import numpy as np
 
 from sklearn.metrics import mean_squared_error, mean_absolute_error, max_error, r2_score, mean_absolute_percentage_error
 
-import consts
-from dto import TaskRawData
+from analysis import consts
+from analysis.dto import TaskRawData
 
 
 fake = Faker()
@@ -234,9 +234,3 @@ def processing_val(task_set, active_task_count, model, scaler):
 
     proc_vals_scaled = scaler.transform(proc_vals)
     return proc_vals_scaled
-    
-    
-
-    
-
-        

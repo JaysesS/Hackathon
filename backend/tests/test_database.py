@@ -76,8 +76,8 @@ class Test_DB(TestCase):
             owner_id=director.id,
             assigner_id=igor_backend.id,
             start_time=datetime.now().timestamp(),
-            due_time=(datetime.now() + timedelta(hours=8)).timestamp(),
-            end_time=(datetime.now() + timedelta(hours=6)).timestamp(),
+            due_time=(datetime.now() + timedelta(hours=5)).timestamp(),
+            end_time=(datetime.now() + timedelta(hours=4)).timestamp(),
             priority=8,
             var_count=2
         )
@@ -99,10 +99,10 @@ class Test_DB(TestCase):
             owner_id=petr.id,
             assigner_id=eremey.id,
             start_time=datetime.now().timestamp(),
-            due_time=(datetime.now() + timedelta(hours=2)).timestamp(),
+            due_time=(datetime.now() + timedelta(hours=8)).timestamp(),
             end_time=(datetime.now() +
-                      timedelta(hours=1, minutes=30)).timestamp(),
-            priority=99,
+                      timedelta(hours=5, minutes=30)).timestamp(),
+            priority=9,
             var_count=100
         )
         task4 = Task(

@@ -5,10 +5,10 @@ from faker import Faker
 import pandas as pd
 import numpy as np
 
-from sklearn.metrics import mean_squared_error, mean_absolute_error, max_error, r2_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, max_error, r2_score, mean_absolute_percentage_error
 
-from analysis import consts
-from analysis.dto import TaskRawData
+import consts
+from dto import TaskRawData
 
 
 fake = Faker()
@@ -48,20 +48,22 @@ def get_task_dates(due, dev, only_positive=None):
 
 def generate_dataset():
     task_list = []
+    n_samples = 1000
     
     # 1 type
-    process_name = "Заказ товара"
-    task_name = "проверка склада"
-    task_priority = 5
-    task_var_count = 1
-    task_due_minutes = 60
-    owner = "BOSS"
-    assigner_list = [{"name":"Соня", "dev_pos":(10, None)},
-                     {"name":"Миша", "dev_pos":(10, True)},
-                     {"name":"Глеб", "dev_pos":(5, None)}]
+    process_name = "Поддержка"
+    task_name = "Фикс чего-то там"
+    task_priority = 8
+    task_var_count = 2
+    task_due_minutes = 60 * 5
+    owner = "Василёк"
+    assigner_list = [{"name":"Еремей", "dev_pos":(30, None)},
+                     {"name":"Игорь", "dev_pos":(10, True)},
+                     {"name":"Глеб", "dev_pos":(20, False)},
+                     {"name": "Абстрактный джун питона", "dev_pos": (30, True)}]
 
     
-    for i in range(300):
+    for i in range(n_samples):
         assigner = random.choice(assigner_list)
         start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
         task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
@@ -71,47 +73,64 @@ def generate_dataset():
     process_name = "закупка"
     task_name = "Оформить заявку"
     task_priority = 5
-    task_var_count = 3
-    task_due_minutes = 60
-    owner = "BOSS"
-    assigner_list = [{"name":"Соня", "dev_pos":(10, None)},
-                     {"name":"Миша", "dev_pos":(15, False)},
-                     {"name":"Глеб", "dev_pos":(3, True)}]
+    task_var_count = 1
+    task_due_minutes = 60 * 2
+    owner = "Василёк"
+    assigner_list = [{"name":"Соня", "dev_pos":(15, False)},
+                     {"name":"Ден", "dev_pos":(15, True)}]
 
     
-    for i in range(300):
+    for i in range(n_samples):
         assigner = random.choice(assigner_list)
         start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
         task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
 
     # 3 type
-    process_name = "информирование"
-    task_name = "обзвон покупателей"
-    task_priority = 4
-    task_var_count = 8
-    task_due_minutes = 67
-    owner = "BOSS"
-    assigner_list = [{"name":"Соня", "dev_pos":(13, True)},
-                     {"name":"Миша", "dev_pos":(8, False)},
-                     {"name":"Глеб", "dev_pos":(20, None)}]
+    process_name = "Заказ товара"
+    task_name = "проверка склада"
+    task_priority = 7
+    task_var_count = 1
+    task_due_minutes = 60 * 1
+    owner = "Василёк"
+    assigner_list = [{"name":"Соня", "dev_pos":(20, False)},
+                     {"name":"Ден", "dev_pos":(15, None)}]
 
-    for i in range(300):
+    
+    for i in range(n_samples):
+        assigner = random.choice(assigner_list)
+        start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
+        task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
+
+
+    # 4 type
+    process_name = "Поддержка"
+    task_name = "Перепиши весь десигн"
+    task_priority = 9
+    task_var_count = 9
+    task_due_minutes = 60 * 8
+    owner = "Василёк"
+    assigner_list = [{"name":"Ден", "dev_pos":(30, False)},
+                     {"name":"Петр", "dev_pos":(8, False)},
+                     {"name":"Еремей", "dev_pos":(20, None)},
+                     {"name":"Абстрактный джун JS\'a", "dev_pos": (30, True)}]
+
+    for i in range(n_samples):
         assigner = random.choice(assigner_list)
         start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
         task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
     
-    # 4 type
-    process_name = "договор"
-    task_name = "оформление договора"
+    # 5 type
+    process_name = "Разработка"
+    task_name = "Сделай гугл"
     task_priority = 6
-    task_var_count = 12
-    task_due_minutes = 10
-    owner = "BOSS"
-    assigner_list = [{"name":"Соня", "dev_pos":(3, None)},
-                     {"name":"Миша", "dev_pos":(7, True)},
-                     {"name":"Глеб", "dev_pos":(10, False)}]
+    task_var_count = 228
+    task_due_minutes = 60 * 4
+    owner = "Василёк"
+    assigner_list = [{"name":"Игорь", "dev_pos":(50, False)},
+                     {"name":"Абстрактный джун питона", "dev_pos":(30, True)},
+                     {"name":"Глеб", "dev_pos":(10, None)}]
 
-    for i in range(300):
+    for i in range(n_samples):
         assigner = random.choice(assigner_list)
         start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
         task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
@@ -126,8 +145,20 @@ def calculate_target_with_noise(df):
         start_time = row.start_time
         end_time = row.end_time
         task_count_on_start = row.other_task_on_start
-        # increase elapsed if task_count_on_start > 0
-        elapsed.append(int((end_time - start_time).total_seconds()*(1+task_count_on_start/10)))
+       
+        weekday_corr = 0
+        if row.start_dow in (0,4):
+            weekday_noise = random.random()
+            weekday_corr = weekday_noise if weekday_noise > 0.5 else 0 
+         # increase elapsed if task_count_on_start > 0
+        task_count_corr = 0
+        if 5 > task_count_on_start > 1:
+            task_count_corr = 0.1 if random.random() > 0.6 else 0
+        elif task_count_on_start >= 5:
+            task_count_corr = task_count_on_start/10
+
+        elapsed_with_noise = int((end_time - start_time).total_seconds()*(1 + task_count_corr)*(1 + weekday_corr))
+        elapsed.append(elapsed_with_noise)
     return elapsed
 
 
@@ -159,8 +190,10 @@ def fit_model(model, X_scaled, Y, split_index):
     model_mae = []
     model_me = []
     model_score = []
+    model_mape = []
+    print("######")
     for train_index, test_index in split_index:
-        print("######")
+        
         X_train, X_test = X_scaled[train_index], X_scaled[test_index]
         y_train, y_test = Y[train_index], Y[test_index]
     #     
@@ -170,11 +203,13 @@ def fit_model(model, X_scaled, Y, split_index):
         model_mae.append(mean_absolute_error(y_test, y_pred))
         model_me.append(max_error(y_test, y_pred))
         model_score.append(model.score(X_test, y_test))
+        model_mape.append(mean_absolute_percentage_error(y_test, y_pred))
     print(f"{model}:")
     print("score:", model_score)
     print("mse:", model_mse)
     print("mae", model_mae)
     print("me", model_me)
+    print("mape", model_mape)
    
     return model
 

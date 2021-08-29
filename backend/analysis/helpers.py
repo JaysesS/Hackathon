@@ -46,6 +46,24 @@ def get_task_dates(due, dev, only_positive=None):
             return start_time, due_time, end_time
 
 
+users_pressets = {
+    "Василёк": {"Фикс чего-то там": (100, True), "Оформить заявку": (100, True), "проверка склада": (100, True), "Перепиши весь десигн": (100, True), "Сделай гугл": (100, True)},
+    "Петя":  {"Фикс чего-то там": (50, False), "Оформить заявку": (1000, True), "проверка склада": (500, True), "Перепиши весь десигн": (10, False), "Сделай гугл": (40, True)},
+    "Глеб":  {"Фикс чего-то там": (30, False), "Оформить заявку": (400, True), "проверка склада": (600, True), "Перепиши весь десигн": (200, True), "Сделай гугл": (30, False)},
+    "Соня":  {"Фикс чего-то там": (1000, True), "Оформить заявку": (50, False), "проверка склада": (50, False), "Перепиши весь десигн": (400, True), "Сделай гугл": (600, True)},
+    "Ванёк":  {"Фикс чего-то там": (30, False), "Оформить заявку": (1000, True), "проверка склада": (500, True), "Перепиши весь десигн": (300, True), "Сделай гугл": (20, False)},
+    "Ден":  {"Фикс чего-то там": (300, True), "Оформить заявку": (500, True), "проверка склада": (500, True), "Перепиши весь десигн": (50, False), "Сделай гугл": (500, True)},
+    "Игорь":  {"Фикс чего-то там": (50, False), "Оформить заявку": (1000, True), "проверка склада": (500, True), "Перепиши весь десигн": (200, True), "Сделай гугл": (10, False)},
+    "Абстрактный тестировщик":  {"Фикс чего-то там": (10, False), "Оформить заявку": (1000, True), "проверка склада": (500, True), "Перепиши весь десигн": (400, True), "Сделай гугл": (1000, True)},
+    "Еремей":  {"Фикс чего-то там": (30, False), "Оформить заявку": (1000, True), "проверка склада": (500, True), "Перепиши весь десигн": (30, False), "Сделай гугл": (400, True)},
+    "Абстрактный джун питона":  {"Фикс чего-то там": (10, True), "Оформить заявку": (1000, True), "проверка склада": (1000, True), "Перепиши весь десигн": (400, True), "Сделай гугл": (500, True)},
+    "Абстрактный джун JS\'a":  {"Фикс чего-то там": (30, False), "Оформить заявку": (1000, True), "проверка склада": (1000, True), "Перепиши весь десигн": (100, True), "Сделай гугл": (1000, True)},
+    "Абстрактный джун devopa":  {"Фикс чего-то там": (30, False), "Оформить заявку": (1000, True), "проверка склада": (1000, True), "Перепиши весь десигн": (400, True), "Сделай гугл": (1000, True)}
+}
+ 
+                       
+
+
 def generate_dataset():
     task_list = []
     n_samples = 1000
@@ -55,18 +73,21 @@ def generate_dataset():
     task_name = "Фикс чего-то там"
     task_priority = 8
     task_var_count = 2
-    task_due_minutes = 60 * 5
+    task_due_minutes = 60 * 3
     owner = "Василёк"
-    assigner_list = [{"name":"Еремей", "dev_pos":(30, None)},
-                     {"name":"Игорь", "dev_pos":(10, True)},
-                     {"name":"Глеб", "dev_pos":(20, False)},
-                     {"name": "Абстрактный джун питона", "dev_pos": (30, True)}]
+#    assigner_list = [{"name":"Еремей", "dev_pos":(30, False)},
+#                     {"name":"Игорь", "dev_pos":(50, True)},
+#                     {"name":"Глеб", "dev_pos":(20, False)},
+#                     {"name": "Абстрактный джун питона", "dev_pos": (30, True)}]
 
     
     for i in range(n_samples):
-        assigner = random.choice(assigner_list)
-        start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
-        task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
+        assigner = random.choice(list(users_pressets.keys()))
+        assigner_task_preset =  users_pressets.get(assigner, {}).get(task_name)
+        if assigner_task_preset is None:
+            assigner_task_preset = (10000, True)
+        start, due, end = get_task_dates(task_due_minutes, *assigner_task_preset)
+        task_list.append(TaskRawData(process_name, task_name, owner, assigner, start, end, due, task_priority, task_var_count))
 
     
     # 2 type
@@ -74,40 +95,45 @@ def generate_dataset():
     task_name = "Оформить заявку"
     task_priority = 5
     task_var_count = 1
-    task_due_minutes = 60 * 2
+    task_due_minutes = 60 * 4
     owner = "Василёк"
     assigner_list = [{"name":"Соня", "dev_pos":(15, False)},
                      {"name":"Ден", "dev_pos":(15, True)}]
 
     
     for i in range(n_samples):
-        assigner = random.choice(assigner_list)
-        start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
-        task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
+        assigner = random.choice(list(users_pressets.keys()))
+        assigner_task_preset =  users_pressets.get(assigner, {}).get(task_name)
+        if assigner_task_preset is None:
+            assigner_task_preset = (10000, True)
+        start, due, end = get_task_dates(task_due_minutes, *assigner_task_preset)
+        task_list.append(TaskRawData(process_name, task_name, owner, assigner, start, end, due, task_priority, task_var_count))
 
     # 3 type
     process_name = "Заказ товара"
     task_name = "проверка склада"
     task_priority = 7
     task_var_count = 1
-    task_due_minutes = 60 * 1
+    task_due_minutes = 60 * 3
     owner = "Василёк"
     assigner_list = [{"name":"Соня", "dev_pos":(20, False)},
                      {"name":"Ден", "dev_pos":(15, None)}]
 
     
     for i in range(n_samples):
-        assigner = random.choice(assigner_list)
-        start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
-        task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
-
-
+        assigner = random.choice(list(users_pressets.keys()))
+        assigner_task_preset =  users_pressets.get(assigner, {}).get(task_name)
+        if assigner_task_preset is None:
+            assigner_task_preset = (10000, True)
+        start, due, end = get_task_dates(task_due_minutes, *assigner_task_preset)
+        task_list.append(TaskRawData(process_name, task_name, owner, assigner, start, end, due, task_priority, task_var_count))
+    
     # 4 type
     process_name = "Поддержка"
     task_name = "Перепиши весь десигн"
     task_priority = 9
     task_var_count = 9
-    task_due_minutes = 60 * 8
+    task_due_minutes = 60 * 5
     owner = "Василёк"
     assigner_list = [{"name":"Ден", "dev_pos":(30, False)},
                      {"name":"Петр", "dev_pos":(8, False)},
@@ -115,10 +141,13 @@ def generate_dataset():
                      {"name":"Абстрактный джун JS\'a", "dev_pos": (30, True)}]
 
     for i in range(n_samples):
-        assigner = random.choice(assigner_list)
-        start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
-        task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
-    
+        assigner = random.choice(list(users_pressets.keys()))
+        assigner_task_preset =  users_pressets.get(assigner, {}).get(task_name)
+        if assigner_task_preset is None:
+            assigner_task_preset = (10000, True)
+        start, due, end = get_task_dates(task_due_minutes, *assigner_task_preset)
+        task_list.append(TaskRawData(process_name, task_name, owner, assigner, start, end, due, task_priority, task_var_count))
+
     # 5 type
     process_name = "Разработка"
     task_name = "Сделай гугл"
@@ -131,10 +160,13 @@ def generate_dataset():
                      {"name":"Глеб", "dev_pos":(10, None)}]
 
     for i in range(n_samples):
-        assigner = random.choice(assigner_list)
-        start, due, end = get_task_dates(task_due_minutes, *assigner['dev_pos'])
-        task_list.append(TaskRawData(process_name, task_name, owner, assigner['name'], start, end, due, task_priority, task_var_count))
-    
+        assigner = random.choice(list(users_pressets.keys()))
+        assigner_task_preset =  users_pressets.get(assigner, {}).get(task_name)
+        if assigner_task_preset is None:
+            assigner_task_preset = (10000, True)
+        start, due, end = get_task_dates(task_due_minutes, *assigner_task_preset)
+        task_list.append(TaskRawData(process_name, task_name, owner, assigner, start, end, due, task_priority, task_var_count))
+
     return task_list
 
 
@@ -147,14 +179,12 @@ def calculate_target_with_noise(df):
         task_count_on_start = row.other_task_on_start
        
         weekday_corr = 0
-        if row.start_dow in (0,4):
-            weekday_noise = random.random()
-            weekday_corr = weekday_noise if weekday_noise > 0.5 else 0 
+#        if row.start_dow in (0,4):
+#            weekday_noise = random.random()
+#            weekday_corr = weekday_noise if weekday_noise > 0.5 else 0 
          # increase elapsed if task_count_on_start > 0
         task_count_corr = 0
-        if 5 > task_count_on_start > 1:
-            task_count_corr = 0.1 if random.random() > 0.6 else 0
-        elif task_count_on_start >= 5:
+        if task_count_on_start >= 5:
             task_count_corr = task_count_on_start/10
 
         elapsed_with_noise = int((end_time - start_time).total_seconds()*(1 + task_count_corr)*(1 + weekday_corr))

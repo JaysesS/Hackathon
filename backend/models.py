@@ -62,7 +62,7 @@ class User(Base):
         return schema.dump(nodes, many=True)
 
     @classmethod
-    def get_flat_list(cls) -> List[dict]:
+    def get_flat_list(cls, list = None) -> List[dict]:
         schema = UserSchema()
         return schema.dump(g.session.query(User).all(), many=True)
 
